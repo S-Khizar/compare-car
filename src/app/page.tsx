@@ -3,7 +3,10 @@ import CarCard from "@/components/comparisionsection/CarCard";
 import IconInfo from "@/components/comparisionsection/IconInfo";
 import RouteLink from "@/components/comparisionsection/RouteLink";
 import { Button } from "@/components/ui/button";
-import { brandModelOptions, variantOptions, cars } from "@/data/carData";
+import {
+  cars,
+  brandAndVariantGroups
+} from "@/data/carData";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
@@ -52,16 +55,14 @@ export default function Home() {
                 <div className="relative col-span-2 flex flex-col md:flex-row gap-9">
                   <CarCard
                     title="Car 1"
-                    firstSelectOptions={brandModelOptions}
-                    secondSelectOptions={variantOptions}
-                    cardClassName="flex-1  "
+                    firstSelectOptions={brandAndVariantGroups}
+                    cardClassName="flex-1"
                   />
 
                   <CarCard
                     title="Car 2"
-                    firstSelectOptions={brandModelOptions}
-                    secondSelectOptions={variantOptions}
-                    cardClassName="flex-1  "
+                    firstSelectOptions={brandAndVariantGroups}
+                    cardClassName="flex-1"
                   />
                   <div className="flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  h-20 w-20 rounded-full bg-dark-blue items-center justify-center text-white font-bold text-2xl">
                     VS
@@ -127,8 +128,8 @@ export default function Home() {
               <CarCard
                 key={index}
                 title={car.title}
-                firstSelectOptions={brandModelOptions}
-                secondSelectOptions={variantOptions}
+                firstSelectOptions={brandAndVariantGroups}
+
                 showRemoveCarButton={index === 2 || index === 3}
                 removeCarFunction={removeCar}
               />
@@ -137,7 +138,7 @@ export default function Home() {
             {visibleCars < MAX_CARS && (
               <button
                 onClick={addCar}
-                className=" rounded-[15px] border-2 border-dashed border-dark-blue flex flex-col items-center justify-center hover:bg-blue-50 transition cursor-pointer"
+                className=" rounded-[15px] border-2 border-dashed border-dark-blue flex flex-col items-center justify-center hover:bg-blue-50 transition cursor-pointer p-4"
               >
                 <div className="w-14 h-14 rounded-full bg-dark-blue text-white flex items-center justify-center text-3xl">
                   +

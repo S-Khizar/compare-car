@@ -1,25 +1,31 @@
 import Image from "next/image";
-import React from "react";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "../ui/select";
+import { useState } from "react";
+
 import { Button } from "@base-ui/react";
 import { X } from "lucide-react";
+import { Combobox, ComboboxCollection, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, } from "../ui/combobox";
+import { brandAndVariantGroups } from "@/data/carData";
 
-type SelectOption = {
-    label: string;
-    value: string;
+
+type Variant = {
+    name: string;
+    price: string;
+};
+
+type Model = {
+    name: string;
+    image: string;
+    variants: Variant[];
+};
+
+type GroupOption = {
+    brand: string;
+    models: Model[];
 };
 
 interface CarCardProps {
     title: string;
-    firstSelectOptions: SelectOption[];
-    secondSelectOptions: SelectOption[];
+    firstSelectOptions: GroupOption[];
     firstPlaceholder?: string;
     secondPlaceholder?: string;
     cardClassName?: string;
@@ -30,80 +36,242 @@ interface CarCardProps {
 const CarCard = ({
     title,
     firstSelectOptions,
-    secondSelectOptions,
     firstPlaceholder = "Select Brand/Model",
     secondPlaceholder = "Select Variant",
     showRemoveCarButton = false,
     removeCarFunction,
     cardClassName
 }: CarCardProps) => {
+    const [selectedBrand, setSelectedBrand] = useState("");
+
+    const [selectedModel, setSelectedModel] = useState("");
+
+    const [selectedVariant, setSelectedVariant] = useState("");
+
+    const brand = brandAndVariantGroups.find(
+        b => b.brand === selectedBrand
+    );
+
+    const model = brand?.models.find(
+        m => m.name === selectedModel
+    );
+
+    const variantOptions =
+        model?.variants ?? [];
+    const carItems = firstSelectOptions.flatMap((group) =>
+        group.models.map((model) => ({
+            brand: group.brand,
+            name: model.name,
+            image: model.image,
+            variants: model.variants,
+        }))
+    );
+
     return (
-        <div className={`rounded-[15px] bg-[linear-gradient(135.91deg,rgba(0,136,255,0.25)_0%,rgba(0,81,153,0.25)_100%)] p-0.5 ${cardClassName}`}>
-            <div className="rounded-[13px] bg-white p-4">
-                {/* Header */}
-                <div className="flex items-center justify-between">
-                    <div className="bg-dark-blue px-6.5 py-1.5 w-fit rounded-sm">
-                        <p className="text-sm text-white font-open-sans font-semibold">{title}</p>
-                    </div>
+        <div className={`rounded-[15px] bg-[linear-gradient(135.91deg,rgba(0,136,255,0.25)_0%,rgba(0,81,153,0.25)_100%)] p-0.5 flex flex-col h-full ${cardClassName}`}>
+            <div className="rounded-[13px] bg-white p-2 md:p-4 flex-1 flex flex-col ">
+                {
+                    selectedBrand && selectedModel && selectedVariant ? (
+                        <div className="flex flex-col flex-1">
 
-                    {
-                        showRemoveCarButton && (
-                            <Button className='rounded-[50%] bg-black cursor-pointer p-1  ' onClick={removeCarFunction}>
+                            <div className="overflow-hidden  flex flex-col flex-1 justify-between">
+                                <div className="relative">
+                                    <div className="h-40 w-full overflow-hidden md:h-fit">
+                                        <Image
+                                            src={model?.image ?? ""}
+                                            alt={model?.name ?? ""}
+                                            width={100}
+                                            height={100}
+                                            className="w-full rounded-xl object-contain  -mt-5 md:mt-0 "
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            setSelectedBrand("");
+                                            setSelectedModel("");
+                                            setSelectedVariant("");
+                                        }}
+                                        className="absolute top-2 right-2 text-custom-grey text-sm font-semibold hover:text-dark-blue transition cursor-pointer">
+                                        <Image
+                                            src="/compareCar/close.svg"
+                                            alt="Close"
+                                            width={20}
+                                            height={20}
+                                        />
+                                    </button>
+                                </div>
 
-                                <X color="white" />
-                            </Button>
-                        )
-                    }
-                </div>
-
-                {/* Car Image */}
-                <div className="flex flex-col items-center justify-center  pb-6">
-                    <div className="w-22 h-22 rounded-full bg-[#0088FF]/25 flex items-center justify-center">
-                        <Image
-                            src="/compareCar/car.png"
-                            alt="car"
-                            width={60}
-                            height={60}
-                        />
-                    </div>
-
-                    <p className="text-center text-custom-grey font-normal mt-2 font-poppins">Add Car</p>
-                </div>
-
-                {/* First Select */}
-                <Select>
-                    <SelectTrigger className="h-14 rounded-xl border border-light-blue bg-white text-sm font-bold text-custom-grey shadow-none">
-                        <SelectValue placeholder={firstPlaceholder} />
-                    </SelectTrigger>
-
-                    <SelectContent>
-                        <SelectGroup>
-                            {firstSelectOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                                <div className="pt-2 md:pt-5 bg-white flex flex-col gap-y-1 text-sm font-semibold">
+                                    <div className="flex items-center gap-2">
+                                        <h2 className="text-md  font-semibold font-open-sans">
+                                            {selectedBrand} {model?.name}
+                                        </h2>
 
 
-                {/* Second Select */}
-                <Select>
-                    <SelectTrigger className="mt-4 h-14 rounded-xl border border-light-blue bg-white text-sm font-bold text-custom-grey shadow-none ">
-                        <SelectValue placeholder={secondPlaceholder} />
-                    </SelectTrigger>
+                                    </div>
 
-                    <SelectContent>
-                        <SelectGroup>
-                            {secondSelectOptions.map((option) => (
-                                <SelectItem key={option.value} value={option.value}>
-                                    {option.label}
-                                </SelectItem>
-                            ))}
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                                    <p className="mt-1 text-[12px] text-[#737373] font-open-sans font-semibold">
+                                        Variant: {variantOptions.find(v => v.name === selectedVariant)?.name ?? ""}
+                                    </p>
+
+                                    <p className=" md:mt-3 text-md  font-semibold font-open-sans text-sm">
+                                        {variantOptions.find(v => v.name === selectedVariant)?.price ?? ""}
+                                        <sup>*</sup>
+                                    </p>
+
+                                    <Button className="w-full text-[12px] border border-[#004C8F]  py-3 cursor-pointer hover:bg-[#004C8F]/10 transition mt-1 md:mt-4 rounded-lg">
+                                        <p className="font-open-sans font-semibold text-[#004C8F]">
+                                            View July Offers
+                                        </p>
+                                    </Button>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    ) : (
+                        <div className="flex flex-col justify-between h-full">
+                            {/* Header */}
+                            <div>
+                                <div className=" flex items-center justify-between">
+                                    <div className="bg-dark-blue px-6.5 py-1.5 w-fit rounded-sm">
+                                        <p className="text-sm text-white font-open-sans font-semibold">{title}</p>
+                                    </div>
+
+                                    {
+                                        showRemoveCarButton && (
+                                            <Button className='rounded-[50%] bg-black cursor-pointer p-1  ' onClick={removeCarFunction}>
+
+                                                <X color="white" />
+                                            </Button>
+                                        )
+                                    }
+                                </div>
+
+                                {/* Car Image */}
+                                <div className="flex flex-col items-center justify-center  pb-6">
+                                    <div className="w-22 h-22 rounded-full bg-[#0088FF]/25 flex items-center justify-center">
+                                        <Image
+                                            src="/compareCar/car.png"
+                                            alt="car"
+                                            width={60}
+                                            height={60}
+                                        />
+                                    </div>
+
+                                    <p className="text-center text-custom-grey font-normal mt-2 font-poppins">Add Car</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                {/* First Select */}
+
+
+
+                                <Combobox
+                                    items={carItems}
+                                    value={selectedModel}
+                                    onValueChange={(value) => {
+                                        if (!value) {
+                                            // First combobox cleared
+                                            setSelectedBrand("");
+                                            setSelectedModel("");
+                                            setSelectedVariant("");
+                                            return;
+                                        }
+
+                                        const selectedCar = carItems.find(
+                                            (item) => item.name === value
+                                        );
+
+                                        if (selectedCar) {
+                                            setSelectedBrand(selectedCar.brand);
+                                            setSelectedModel(selectedCar.name);
+                                            setSelectedVariant("");
+                                        }
+                                    }}
+                                >
+                                    <ComboboxInput
+                                        placeholder={firstPlaceholder}
+                                        className="h-14 rounded-xl border border-light-blue bg-white text-sm font-bold text-custom-grey shadow-none"
+                                        showClear
+                                    />
+
+                                    <ComboboxContent className="max-h-80 overflow-y-auto rounded-xl border border-light-blue">
+                                        <ComboboxEmpty>
+                                            No cars found.
+                                        </ComboboxEmpty>
+
+                                        <ComboboxCollection>
+                                            {(item) => (
+                                                <ComboboxItem
+                                                    key={`${item.brand}-${item.name}`}
+                                                    value={item.name}
+                                                >
+                                                    <div>
+                                                        <p>{item.name}</p>
+                                                        <p className="text-xs text-gray-500">
+                                                            {item.brand}
+                                                        </p>
+                                                    </div>
+                                                </ComboboxItem>
+                                            )}
+                                        </ComboboxCollection>
+                                    </ComboboxContent>
+                                </Combobox>
+
+
+                                {/* Second Select */}
+                                <div className={`mt-4 ${!model ? "opacity-50 cursor-not-allowed" : ""}`}>
+                                    <Combobox
+                                        items={variantOptions}
+                                        value={selectedVariant}
+                                        onValueChange={(value) => {
+                                            setSelectedVariant(value ?? "");
+                                        }}
+                                        disabled={!model}
+                                    >
+                                        <ComboboxInput
+                                            placeholder={secondPlaceholder}
+                                            className={`mt-4 h-14 rounded-xl border border-light-blue bg-white text-sm font-bold text-custom-grey shadow-none ${!model ? "opacity-50 cursor-not-allowed" : ""}`}
+                                            showClear
+                                        />
+
+                                        <ComboboxContent className="rounded-xl border border-light-blue">
+                                            <ComboboxEmpty>
+                                                No variant found.
+                                            </ComboboxEmpty>
+
+                                            <ComboboxCollection>
+                                                {(variant) => (
+                                                    <ComboboxItem
+                                                        key={variant.name}
+                                                        value={variant.name}
+                                                    >
+                                                        <div className="flex w-full justify-between">
+                                                            <span>{variant.name}</span>
+
+                                                            <span className="text-muted-foreground text-xs">
+                                                                {variant.price}
+                                                            </span>
+                                                        </div>
+                                                    </ComboboxItem>
+                                                )}
+                                            </ComboboxCollection>
+                                        </ComboboxContent>
+                                    </Combobox>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    )
+                }
+
+
+
+
             </div>
         </div>
     );

@@ -140,28 +140,7 @@
   }
 }
 
-/* Radix Select Scrollbar */
-[data-radix-select-viewport] {
-  scrollbar-width: thin;
-  scrollbar-color: #0057A8 transparent;
-}
 
-[data-radix-select-viewport]::-webkit-scrollbar {
-  width: 6px;
-}
-
-[data-radix-select-viewport]::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-[data-radix-select-viewport]::-webkit-scrollbar-thumb {
-  background: #0057A8;
-  border-radius: 9999px;
-}
-
-[data-radix-select-viewport]::-webkit-scrollbar-thumb:hover {
-  background: #004C8F;
-}
 
 /** Custom Container **/
 @utility container {
