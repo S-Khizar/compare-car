@@ -5,50 +5,44 @@ import { Button } from "@base-ui/react";
 import { X } from "lucide-react";
 import { Combobox, ComboboxCollection, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, } from "../ui/combobox";
 import { brandAndVariantGroups } from "@/data/carData";
+import { GroupOption, SelectedCar } from "@/type/car";
 
 
-type Variant = {
-    name: string;
-    price: string;
-};
 
-type Model = {
-    name: string;
-    image: string;
-    variants: Variant[];
-};
 
-type GroupOption = {
-    brand: string;
-    models: Model[];
-};
-
-interface CarCardProps {
+type CarCardProps = {
     title: string;
     firstSelectOptions: GroupOption[];
+
+    selectedCar: SelectedCar | null;
+
     firstPlaceholder?: string;
     secondPlaceholder?: string;
+
+    onCarSelect: (car: SelectedCar | null) => void;
+
     cardClassName?: string;
+
     showRemoveCarButton?: boolean;
     removeCarFunction?: () => void;
-}
+};
 
 const CarCard = ({
     title,
     firstSelectOptions,
+    selectedCar,
     firstPlaceholder = "Select Brand/Model",
     secondPlaceholder = "Select Variant",
     showRemoveCarButton = false,
     removeCarFunction,
-    cardClassName
+    cardClassName,
+    onCarSelect,
 }: CarCardProps) => {
-    const [selectedBrand, setSelectedBrand] = useState("");
+    const selectedBrand = selectedCar?.brand ?? "";
+    const selectedModel = selectedCar?.model ?? "";
+    const selectedVariant = selectedCar?.variant ?? "";
 
-    const [selectedModel, setSelectedModel] = useState("");
-
-    const [selectedVariant, setSelectedVariant] = useState("");
-
-    const brand = brandAndVariantGroups.find(
+    const brand = firstSelectOptions.find(
         b => b.brand === selectedBrand
     );
 
@@ -87,9 +81,7 @@ const CarCard = ({
                                     </div>
                                     <button
                                         onClick={() => {
-                                            setSelectedBrand("");
-                                            setSelectedModel("");
-                                            setSelectedVariant("");
+                                            onCarSelect(null);
                                         }}
                                         className="absolute top-2 right-2 text-custom-grey text-sm font-semibold hover:text-dark-blue transition cursor-pointer">
                                         <Image
@@ -166,36 +158,35 @@ const CarCard = ({
 
                             <div>
                                 {/* First Select */}
-
-
-
                                 <Combobox
                                     items={carItems}
                                     value={selectedModel}
                                     onValueChange={(value) => {
                                         if (!value) {
-                                            // First combobox cleared
-                                            setSelectedBrand("");
-                                            setSelectedModel("");
-                                            setSelectedVariant("");
+                                            onCarSelect(null);
                                             return;
                                         }
 
-                                        const selectedCar = carItems.find(
+                                        const selectedItem = carItems.find(
                                             (item) => item.name === value
                                         );
 
-                                        if (selectedCar) {
-                                            setSelectedBrand(selectedCar.brand);
-                                            setSelectedModel(selectedCar.name);
-                                            setSelectedVariant("");
+                                        if (selectedItem) {
+                                            onCarSelect({
+                                                brand: selectedItem.brand,
+                                                model: selectedItem.name,
+                                                variant: "",
+                                            });
                                         }
                                     }}
                                 >
                                     <ComboboxInput
                                         placeholder={firstPlaceholder}
                                         className="h-14 rounded-xl border border-light-blue bg-white text-sm font-bold text-custom-grey shadow-none"
+                                        showTrigger
                                         showClear
+                                        hasValue={!!selectedModel}
+
                                     />
 
                                     <ComboboxContent className="max-h-80 overflow-y-auto rounded-xl border border-light-blue">
@@ -228,7 +219,21 @@ const CarCard = ({
                                         items={variantOptions}
                                         value={selectedVariant}
                                         onValueChange={(value) => {
-                                            setSelectedVariant(value ?? "");
+                                            if (!value) {
+                                                onCarSelect({
+                                                    brand: selectedBrand,
+                                                    model: selectedModel,
+                                                    variant: "",
+                                                });
+
+                                                return;
+                                            }
+
+                                            onCarSelect({
+                                                brand: selectedBrand,
+                                                model: selectedModel,
+                                                variant: value,
+                                            });
                                         }}
                                         disabled={!model}
                                     >
@@ -236,6 +241,9 @@ const CarCard = ({
                                             placeholder={secondPlaceholder}
                                             className={`mt-4 h-14 rounded-xl border border-light-blue bg-white text-sm font-bold text-custom-grey shadow-none ${!model ? "opacity-50 cursor-not-allowed" : ""}`}
                                             showClear
+                                            hasValue={!!selectedVariant}
+                                            disabled={!model}
+
                                         />
 
                                         <ComboboxContent className="rounded-xl border border-light-blue">

@@ -3,32 +3,93 @@ import CarCard from "@/components/comparisionsection/CarCard";
 import IconInfo from "@/components/comparisionsection/IconInfo";
 import RouteLink from "@/components/comparisionsection/RouteLink";
 import { Button } from "@/components/ui/button";
-import {
-  cars,
-  brandAndVariantGroups
-} from "@/data/carData";
+import { brandAndVariantGroups } from "@/data/carData";
+import { CompareCar, SelectedCar } from "@/type/car";
 import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 
 
 export default function Home() {
+
+
   const MAX_CARS = 4;
-  const MIN_CARS = 2;
 
-  const [visibleCars, setVisibleCars] = useState(2);
+  const [cars, setCars] = useState<CompareCar[]>([
+    {
+      id: crypto.randomUUID(),
+      title: "Car 1",
+      selectedCar: null,
+    },
+    {
+      id: crypto.randomUUID(),
+      title: "Car 2",
+      selectedCar: null,
+    },
+  ]);
 
-  const addCar = () => {
-    if (visibleCars < MAX_CARS) {
-      setVisibleCars((prev) => prev + 1);
-    }
+  const handleCarSelect = (
+    carId: string,
+    selectedCar: SelectedCar | null
+  ) => {
+    setCars((prevCars) =>
+      prevCars.map((car) =>
+        car.id === carId
+          ? {
+            ...car,
+            selectedCar,
+          }
+          : car
+      )
+    );
   };
 
-  const removeCar = () => {
-    if (visibleCars > MIN_CARS) {
-      setVisibleCars((prev) => prev - 1);
+  const getFilteredOptions = (currentCarId: string) => {
+    return brandAndVariantGroups
+      .map((brandGroup) => ({
+        ...brandGroup,
+
+        models: brandGroup.models
+          .map((model) => ({
+            ...model,
+
+            variants: model.variants.filter((variant) => {
+              const alreadySelected = cars.some(
+                (car) =>
+                  car.id !== currentCarId &&
+                  car.selectedCar?.brand === brandGroup.brand &&
+                  car.selectedCar?.model === model.name &&
+                  car.selectedCar?.variant === variant.name
+              );
+
+              return !alreadySelected;
+            }),
+          }))
+          .filter((model) => model.variants.length > 0),
+      }))
+      .filter((brandGroup) => brandGroup.models.length > 0);
+  };
+
+  const addCar = () => {
+    if (cars.length >= MAX_CARS) {
+      return;
     }
-  }
+
+    setCars((prevCars) => [
+      ...prevCars,
+      {
+        id: crypto.randomUUID(),
+        title: `Car ${prevCars.length + 1}`,
+        selectedCar: null,
+      },
+    ]);
+  };
+
+  const removeCar = (carId: string) => {
+    setCars((prev) =>
+      prev.filter((car) => car.id !== carId)
+    );
+  };
 
   return (
     <>
@@ -50,24 +111,23 @@ export default function Home() {
 
               {/* Content */}
               <div className="relative mt-12 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-y-10 md:gap-10  ">
-                {/* Car 1 */}
+                <div className="relative col-span-2 flex flex-col gap-9 md:flex-row">
+                  {cars.slice(0, 2).map((car) => (
+                    <CarCard
+                      key={car.id}
+                      title={car.title}
+                      selectedCar={car.selectedCar}
+                      firstSelectOptions={getFilteredOptions(car.id)}
+                      cardClassName="flex-1"
+                      onCarSelect={(selectedCar) =>
+                        handleCarSelect(car.id, selectedCar)
+                      }
+                    />
+                  ))}
 
-                <div className="relative col-span-2 flex flex-col md:flex-row gap-9">
-                  <CarCard
-                    title="Car 1"
-                    firstSelectOptions={brandAndVariantGroups}
-                    cardClassName="flex-1"
-                  />
-
-                  <CarCard
-                    title="Car 2"
-                    firstSelectOptions={brandAndVariantGroups}
-                    cardClassName="flex-1"
-                  />
-                  <div className="flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2  h-20 w-20 rounded-full bg-dark-blue items-center justify-center text-white font-bold text-2xl">
+                  <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-dark-blue text-2xl font-bold text-white">
                     VS
                   </div>
-
                 </div>
 
 
@@ -123,28 +183,31 @@ export default function Home() {
           <p className="text-3xl font-open-sans font-bold ">Compare Cars</p>
           <p className=" font-open-sans mt-4 text-custom-grey">Not sure which HDFC product suits your needs? Use HDFC's comparison tool to evaluate multiple options across features, benefits, interest rates, eligibility, fees, and more helping you choose the right financial solution with confidence.</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-5 md:gap-x-5 mt-5">
-            {cars.slice(0, visibleCars).map((car, index) => (
+          <div className="grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-5 lg:grid-cols-4">
+            {cars.map((car, index) => (
               <CarCard
-                key={index}
+                key={car.id}
                 title={car.title}
-                firstSelectOptions={brandAndVariantGroups}
-
-                showRemoveCarButton={index === 2 || index === 3}
-                removeCarFunction={removeCar}
+                selectedCar={car.selectedCar}
+                firstSelectOptions={getFilteredOptions(car.id)}
+                onCarSelect={(selectedCar) =>
+                  handleCarSelect(car.id, selectedCar)
+                }
+                showRemoveCarButton={index >= 2}
+                removeCarFunction={() => removeCar(car.id)}
               />
             ))}
 
-            {visibleCars < MAX_CARS && (
+            {cars.length < MAX_CARS && (
               <button
                 onClick={addCar}
-                className=" rounded-[15px] border-2 border-dashed border-dark-blue flex flex-col items-center justify-center hover:bg-blue-50 transition cursor-pointer p-4"
+                className="flex cursor-pointer flex-col items-center justify-center rounded-[15px] border-2 border-dashed border-dark-blue p-4 transition hover:bg-blue-50"
               >
-                <div className="w-14 h-14 rounded-full bg-dark-blue text-white flex items-center justify-center text-3xl">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-dark-blue text-3xl text-white">
                   +
                 </div>
 
-                <p className="mt-4 font-semibold text-dark-blue text-lg">
+                <p className="mt-4 text-lg font-semibold text-dark-blue">
                   Add Car
                 </p>
               </button>

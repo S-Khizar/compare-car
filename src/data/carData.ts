@@ -297,40 +297,7 @@ export const brandAndVariantGroups = [
         ],
     },
 ];
-export const variantOptions = [
-    {
-        label: "Base",
-        value: "base",
-    },
-    {
-        label: "LXi",
-        value: "lxi",
-    },
-    {
-        label: "VXi",
-        value: "vxi",
-    },
-    {
-        label: "ZXi",
-        value: "zxi",
-    },
-    {
-        label: "ZXi+",
-        value: "zxi-plus",
-    },
-    {
-        label: "Sport",
-        value: "sport",
-    },
-    {
-        label: "Luxury",
-        value: "luxury",
-    },
-    {
-        label: "Top Model",
-        value: "top-model",
-    },
-];
+
 
 export const cars = [
     { title: "Car 1" },

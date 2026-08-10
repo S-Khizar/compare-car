@@ -36,16 +36,24 @@ function ComboboxTrigger({
   )
 }
 
-function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
+function ComboboxClear({
+  className,
+  ...props
+}: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
       data-slot="combobox-clear"
-      render={<InputGroupButton variant="ghost" size="icon-xs" />}
+      render={
+        <InputGroupButton
+          variant="ghost"
+          size="icon-xs"
+        >
+          <XIcon className="size-4 pointer-events-none" />
+        </InputGroupButton>
+      }
       className={cn(className)}
       {...props}
-    >
-      <XIcon className="pointer-events-none" />
-    </ComboboxPrimitive.Clear>
+    />
   )
 }
 
@@ -55,32 +63,53 @@ function ComboboxInput({
   disabled = false,
   showTrigger = true,
   showClear = false,
+  hasValue = false,
   ...props
 }: ComboboxPrimitive.Input.Props & {
   showTrigger?: boolean
   showClear?: boolean
+  hasValue?: boolean
 }) {
+  const [inputValue, setInputValue] = React.useState("");
+
+
+  let hasInput = inputValue.length > 0 || hasValue;
+
+  console.log("hasInput", hasInput, "inputValue", inputValue);
+
   return (
     <InputGroup className={cn("w-auto", className)}>
       <ComboboxPrimitive.Input
         render={<InputGroupInput disabled={disabled} />}
         {...props}
+        onChange={(event) => {
+          setInputValue(event.target.value)
+          props.onChange?.(event)
+        }}
       />
+
       <InputGroupAddon align="inline-end">
-        {showTrigger && (
+        {/* Chevron */}
+        {showTrigger && !hasInput && (
           <InputGroupButton
             size="icon-xs"
             variant="ghost"
             asChild
             data-slot="input-group-button"
-            className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
             disabled={disabled}
           >
             <ComboboxTrigger />
           </InputGroupButton>
         )}
-        {showClear && <ComboboxClear disabled={disabled} />}
+
+        {/* X */}
+        {showClear && hasInput && (
+          <ComboboxClear disabled={disabled} onClick={() => {
+            setInputValue("");
+          }} />
+        )}
       </InputGroupAddon>
+
       {children}
     </InputGroup>
   )
@@ -143,7 +172,7 @@ function ComboboxItem({
       data-slot="combobox-item"
       className={cn(
         "  relative flex w-full cursor-default items-center gap-2 rounded-md py-1 pr-8 pl-1.5 text-sm outline-hidden select-none hover:bg-[#0088FF]/15 data-highlighted:bg-accent data-highlighted:text-accent-foreground  not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
-,
+        ,
         className
       )}
       {...props}
