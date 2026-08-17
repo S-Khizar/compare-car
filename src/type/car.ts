@@ -3,6 +3,7 @@ export type Variant = {
     price: string;
 };
 
+
 export type Model = {
     name: string;
     image: string;
@@ -17,11 +18,16 @@ export type GroupOption = {
 /**
  * Represents the car currently selected by a CarCard.
  */
-export type SelectedCar = {
+export interface SelectedCar {
     brand: string;
     model: string;
     variant: string;
-};
+    price?: string;
+    engineDisplacement?: string;
+    maxPower?: string;
+    mileage?: string;
+    transmission?: string;
+}
 
 /**
  * Represents one comparison card.

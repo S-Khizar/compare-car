@@ -1,20 +1,22 @@
 import Image from 'next/image'
-import React from 'react'
+
 
 interface RouteLinkProp {
-    iamgeAlt?: string,
+    imageAlt?: string,
     image?: string,
     routeName?: string,
     variant?: string,
 }
 
-const RouteLink = ({ iamgeAlt = "home", image, routeName, variant = 'childRoute' }: RouteLinkProp) => {
+const RouteLink = ({ imageAlt = "home", image, routeName, variant = 'parentRoute' }: RouteLinkProp) => {
     return (
         <div className='flex gap-2.5'>
             {
-                image ? (<Image src={`/compareCar/${image}`} alt={iamgeAlt} width={12} height={12} />) : (<p className={`font-open-sans text-sm ${variant === 'parentRoute' ? 'text-dark-blue' : 'text-black'}`}>{routeName}</p>)
+                image ? (<Image src={`/compareCar/${image}`} alt={imageAlt} width={12} height={12} />) : (<p className={`font-open-sans text-sm ${variant === 'parentRoute' ? 'text-dark-blue' : 'text-black'}`}>{routeName}</p>)
             }
-            <Image src='/compareCar/chevronright.svg' alt='chevronRight' width={12} height={12} />
+            {
+                variant === 'parentRoute' && (<Image src='/compareCar/chevronright.svg' alt='chevronRight' width={12} height={12} />)
+            }
         </div>
     )
 }

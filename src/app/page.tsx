@@ -1,19 +1,16 @@
 "use client"
 import CarCard from "@/components/comparisionsection/CarCard";
 import IconInfo from "@/components/comparisionsection/IconInfo";
-import RouteLink from "@/components/comparisionsection/RouteLink";
 import { Button } from "@/components/ui/button";
 import { brandAndVariantGroups } from "@/data/carData";
 import { CompareCar, SelectedCar } from "@/type/car";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 
 
 export default function Home() {
-
-
-  const MAX_CARS = 4;
 
   const [cars, setCars] = useState<CompareCar[]>([
     {
@@ -32,12 +29,48 @@ export default function Home() {
     carId: string,
     selectedCar: SelectedCar | null
   ) => {
+    if (!selectedCar) {
+      setCars((prevCars) =>
+        prevCars.map((car) =>
+          car.id === carId
+            ? {
+              ...car,
+              selectedCar: null,
+            }
+            : car
+        )
+      );
+
+      return;
+    }
+
+    const brandGroup = brandAndVariantGroups.find(
+      (brand) => brand.brand === selectedCar.brand
+    );
+
+    const model = brandGroup?.models.find(
+      (model) => model.name === selectedCar.model
+    );
+
+    const variant = model?.variants.find(
+      (variant) => variant.name === selectedCar.variant
+    );
+
+    const completeSelectedCar = {
+      ...selectedCar,
+      price: variant?.price,
+      engineDisplacement: variant?.engineDisplacement,
+      maxPower: variant?.maxPower,
+      mileage: variant?.mileage,
+      transmission: variant?.transmission,
+    };
+
     setCars((prevCars) =>
       prevCars.map((car) =>
         car.id === carId
           ? {
             ...car,
-            selectedCar,
+            selectedCar: completeSelectedCar,
           }
           : car
       )
@@ -70,25 +103,12 @@ export default function Home() {
       .filter((brandGroup) => brandGroup.models.length > 0);
   };
 
-  const addCar = () => {
-    if (cars.length >= MAX_CARS) {
-      return;
-    }
+  const getCompareQuery = () => {
+    const selectedCars = cars
+      .map((car) => car.selectedCar)
+      .filter((car): car is SelectedCar => car !== null);
 
-    setCars((prevCars) => [
-      ...prevCars,
-      {
-        id: crypto.randomUUID(),
-        title: `Car ${prevCars.length + 1}`,
-        selectedCar: null,
-      },
-    ]);
-  };
-
-  const removeCar = (carId: string) => {
-    setCars((prev) =>
-      prev.filter((car) => car.id !== carId)
-    );
+    return encodeURIComponent(JSON.stringify(selectedCars));
   };
 
   return (
@@ -154,16 +174,17 @@ export default function Home() {
                     />
                   </div>
 
-                  <Button
-                    className="w-full sm:w-auto bg-dark-blue hover:bg-dark-blue/80 cursor-pointer"
-                    size="md"
-                  >
-                    <p className="text-lg sm:text-xl font-bold font-open-sans">
-                      Start Comparing
-                    </p>
-
-                    <ChevronRight color="white" width={20} height={20} />
-                  </Button>
+                  <Link href={`/compare-car?cars=${getCompareQuery()}`}>
+                    <Button
+                      className="w-full md:w-auto bg-dark-blue hover:bg-dark-blue/80 cursor-pointer px-8"
+                      size="md"
+                    >
+                      <p className="text-lg sm:text-xl font-bold font-open-sans">
+                        Start Comparing
+                      </p>
+                      <ChevronRight color="white" width={20} height={20} />
+                    </Button>
+                  </Link>
                 </div>
 
               </div>
@@ -171,62 +192,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-      <div className="my-20">
-        <div className="container md:px-6 xl:px-37.5">
-          <div className="mb-2.5 flex gap-2.5 ">
-            <RouteLink image="home.svg" iamgeAlt="home" />
-            <RouteLink routeName="Cars Loan" variant="parentRoute" />
-            <RouteLink routeName="Compare cars" variant="childRoute" />
-
-          </div>
-          <p className="text-3xl font-open-sans font-bold ">Compare Cars</p>
-          <p className=" font-open-sans mt-4 text-custom-grey">Not sure which HDFC product suits your needs? Use HDFC's comparison tool to evaluate multiple options across features, benefits, interest rates, eligibility, fees, and more helping you choose the right financial solution with confidence.</p>
-
-          <div className="grid grid-cols-1 gap-y-5 md:grid-cols-2 md:gap-x-5 lg:grid-cols-4">
-            {cars.map((car, index) => (
-              <CarCard
-                key={car.id}
-                title={car.title}
-                selectedCar={car.selectedCar}
-                firstSelectOptions={getFilteredOptions(car.id)}
-                onCarSelect={(selectedCar) =>
-                  handleCarSelect(car.id, selectedCar)
-                }
-                showRemoveCarButton={index >= 2}
-                removeCarFunction={() => removeCar(car.id)}
-              />
-            ))}
-
-            {cars.length < MAX_CARS && (
-              <button
-                onClick={addCar}
-                className="flex cursor-pointer flex-col items-center justify-center rounded-[15px] border-2 border-dashed border-dark-blue p-4 transition hover:bg-blue-50"
-              >
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-dark-blue text-3xl text-white">
-                  +
-                </div>
-
-                <p className="mt-4 text-lg font-semibold text-dark-blue">
-                  Add Car
-                </p>
-              </button>
-            )}
-          </div>
-
-          <Button
-            className="block mx-auto mt-5 sm:w-auto bg-dark-blue hover:bg-dark-blue/80 px-6 xl:px-12 h-15 w-1/2 cursor-pointer"
-            size="md"
-          >
-            <p className="text-sm xl:text-xl font-semibold">
-              Compare Now
-            </p>
-          </Button>
-        </div>
-
-
-      </div>
-
 
 
     </>

@@ -1,10 +1,7 @@
 import Image from "next/image";
-import { useState } from "react";
-
 import { Button } from "@base-ui/react";
 import { X } from "lucide-react";
 import { Combobox, ComboboxCollection, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, } from "../ui/combobox";
-import { brandAndVariantGroups } from "@/data/carData";
 import { GroupOption, SelectedCar } from "@/type/car";
 
 
@@ -25,6 +22,10 @@ type CarCardProps = {
 
     showRemoveCarButton?: boolean;
     removeCarFunction?: () => void;
+    showComparision: boolean;
+    setShowComparison: React.Dispatch<
+        React.SetStateAction<boolean>
+    >;
 };
 
 const CarCard = ({
@@ -37,6 +38,8 @@ const CarCard = ({
     removeCarFunction,
     cardClassName,
     onCarSelect,
+    showComparision,
+    setShowComparison
 }: CarCardProps) => {
     const selectedBrand = selectedCar?.brand ?? "";
     const selectedModel = selectedCar?.model ?? "";
@@ -70,7 +73,7 @@ const CarCard = ({
 
                             <div className="overflow-hidden  flex flex-col flex-1 justify-between">
                                 <div className="relative">
-                                    <div className="h-40 w-full overflow-hidden md:h-fit">
+                                    <div className=" w-full overflow-hidden ">
                                         <Image
                                             src={model?.image ?? ""}
                                             alt={model?.name ?? ""}
@@ -82,6 +85,7 @@ const CarCard = ({
                                     <button
                                         onClick={() => {
                                             onCarSelect(null);
+                                            setShowComparison(false);
                                         }}
                                         className="absolute top-2 right-2 text-custom-grey text-sm font-semibold hover:text-dark-blue transition cursor-pointer">
                                         <Image
@@ -95,18 +99,18 @@ const CarCard = ({
 
                                 <div className="pt-2 md:pt-5 bg-white flex flex-col gap-y-1 text-sm font-semibold">
                                     <div className="flex items-center gap-2">
-                                        <h2 className="text-md  font-semibold font-open-sans">
+                                        <h2 className="font-semibold font-open-sans">
                                             {selectedBrand} {model?.name}
                                         </h2>
 
 
                                     </div>
 
-                                    <p className="mt-1 text-[12px] text-[#737373] font-open-sans font-semibold">
+                                    <p className="mt-1 text-sm  text-[#737373] font-open-sans font-semibold">
                                         Variant: {variantOptions.find(v => v.name === selectedVariant)?.name ?? ""}
                                     </p>
 
-                                    <p className=" md:mt-3 text-md  font-semibold font-open-sans text-sm">
+                                    <p className=" md:mt-3  font-semibold font-open-sans ">
                                         {variantOptions.find(v => v.name === selectedVariant)?.price ?? ""}
                                         <sup>*</sup>
                                     </p>
@@ -126,17 +130,24 @@ const CarCard = ({
                         <div className="flex flex-col justify-between h-full">
                             {/* Header */}
                             <div>
-                                <div className=" flex items-center justify-between">
+                                <div className="relative flex items-center justify-between">
                                     <div className="bg-dark-blue px-6.5 py-1.5 w-fit rounded-sm">
                                         <p className="text-sm text-white font-open-sans font-semibold">{title}</p>
                                     </div>
 
                                     {
                                         showRemoveCarButton && (
-                                            <Button className='rounded-[50%] bg-black cursor-pointer p-1  ' onClick={removeCarFunction}>
+                                            <button
+                                                onClick={removeCarFunction}
+                                                className="absolute top-2 right-2 text-custom-grey text-sm font-semibold hover:text-dark-blue transition cursor-pointer">
+                                                <Image
+                                                    src="/compareCar/close.svg"
+                                                    alt="Close"
+                                                    width={20}
+                                                    height={20}
+                                                />
 
-                                                <X color="white" />
-                                            </Button>
+                                            </button>
                                         )
                                     }
                                 </div>
