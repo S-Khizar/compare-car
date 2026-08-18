@@ -67,7 +67,7 @@ const CarCard = ({
 
     return (
         <div className={`rounded-[15px] bg-[linear-gradient(135.91deg,rgba(0,136,255,0.25)_0%,rgba(0,81,153,0.25)_100%)] p-0.5 flex flex-col h-full ${cardClassName}`}>
-            <div className="rounded-[13px] bg-white p-2 md:p-4 flex-1 flex flex-col ">
+            <div className="rounded-[13px] bg-white p-5 flex-1 flex flex-col ">
                 {
                     selectedBrand && selectedModel && selectedVariant ? (
                         <div className="flex flex-col flex-1">
@@ -80,7 +80,7 @@ const CarCard = ({
                                             alt={model?.name ?? ""}
                                             width={100}
                                             height={100}
-                                            className="w-full rounded-xl object-contain  -mt-5 md:mt-0 "
+                                            className="w-full rounded-xl object-contain"
                                         />
                                     </div>
                                     <button

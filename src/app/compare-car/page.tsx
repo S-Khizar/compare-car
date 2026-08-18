@@ -131,11 +131,11 @@ const page = () => {
                     />
 
                     <Button
-                        className={`block mx-auto mt-5 sm:w-auto bg-dark-blue hover:bg-dark-blue/80 px-6 xl:px-12 h-15 w-1/2 ${!isComparisonReady
+                        className={`block mx-auto mt-5 sm:w-auto bg-dark-blue hover:bg-dark-blue/80 px-4  xl:px-12 h-15  ${!isComparisonReady
                             ? "cursor-not-allowed opacity-50"
                             : "cursor-pointer"
                             }`}
-                        size="md"
+
                         disabled={!isComparisonReady}
                         onClick={() => setShowComparison((prev) => !prev)}
                     >
