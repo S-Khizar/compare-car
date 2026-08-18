@@ -2,7 +2,7 @@ import Image from "next/image";
 import { Button } from "@base-ui/react";
 import { X } from "lucide-react";
 import { Combobox, ComboboxCollection, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, } from "../ui/combobox";
-import { GroupOption, SelectedCar } from "@/type/car";
+import { CompareCar, GroupOption, SelectedCar } from "@/type/car";
 
 
 
@@ -10,7 +10,7 @@ import { GroupOption, SelectedCar } from "@/type/car";
 type CarCardProps = {
     title: string;
     firstSelectOptions: GroupOption[];
-
+    cars: CompareCar[];
     selectedCar: SelectedCar | null;
 
     firstPlaceholder?: string;
@@ -22,7 +22,7 @@ type CarCardProps = {
 
     showRemoveCarButton?: boolean;
     removeCarFunction?: () => void;
-    showComparision: boolean;
+
     setShowComparison: React.Dispatch<
         React.SetStateAction<boolean>
     >;
@@ -31,6 +31,7 @@ type CarCardProps = {
 const CarCard = ({
     title,
     firstSelectOptions,
+    cars,
     selectedCar,
     firstPlaceholder = "Select Brand/Model",
     secondPlaceholder = "Select Variant",
@@ -38,7 +39,7 @@ const CarCard = ({
     removeCarFunction,
     cardClassName,
     onCarSelect,
-    showComparision,
+
     setShowComparison
 }: CarCardProps) => {
     const selectedBrand = selectedCar?.brand ?? "";
@@ -85,6 +86,9 @@ const CarCard = ({
                                     <button
                                         onClick={() => {
                                             onCarSelect(null);
+                                            if (cars.length > 2) {
+                                                removeCarFunction?.();
+                                            }
                                             setShowComparison(false);
                                         }}
                                         className="absolute top-2 right-2 text-custom-grey text-sm font-semibold hover:text-dark-blue transition cursor-pointer">

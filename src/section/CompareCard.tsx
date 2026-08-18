@@ -8,16 +8,14 @@ type CompareCardProps = {
     setCars: React.Dispatch<
         React.SetStateAction<CompareCar[]>
     >;
-    showComparision: boolean;
+
     setShowComparison: React.Dispatch<
         React.SetStateAction<boolean>
     >;
 
 };
 
-const CompareCard = ({ cars, setCars, showComparision, setShowComparison }: CompareCardProps) => {
-
-
+const CompareCard = ({ cars, setCars, setShowComparison }: CompareCardProps) => {
 
     const MAX_CARS = 4;
     const addCar = () => {
@@ -36,10 +34,14 @@ const CompareCard = ({ cars, setCars, showComparision, setShowComparison }: Comp
     };
 
     const removeCar = (carId: string) => {
-        setCars((prev) =>
-            prev.filter((car) => car.id !== carId)
+        setCars((prevCars) =>
+            prevCars
+                .filter((car) => car.id !== carId)
+                .map((car, index) => ({
+                    ...car,
+                    title: `Car ${index + 1}`,
+                }))
         );
-
     };
 
 
@@ -134,7 +136,7 @@ const CompareCard = ({ cars, setCars, showComparision, setShowComparison }: Comp
                         }
                         showRemoveCarButton={index >= 2}
                         removeCarFunction={() => removeCar(car.id)}
-                        showComparision={showComparision}
+                        cars={cars}
                         setShowComparison={setShowComparison}
                     />
                 ))
@@ -151,7 +153,7 @@ const CompareCard = ({ cars, setCars, showComparision, setShowComparison }: Comp
                                 handleCarSelect(car.id, selectedCar)
                             }
                             removeCarFunction={() => removeCar(car.id)}
-                            showComparision={showComparision}
+                            cars={cars}
                             setShowComparison={setShowComparison}
                         />
                     ))}
@@ -161,7 +163,7 @@ const CompareCard = ({ cars, setCars, showComparision, setShowComparison }: Comp
             {cars.length < MAX_CARS && (
                 <button
                     onClick={addCar}
-                    className="flex cursor-pointer flex-col items-center justify-center rounded-[15px] border-2 border-dashed border-dark-blue p-4 transition hover:bg-blue-50"
+                    className="flex cursor-pointer py-20 flex-col items-center justify-center rounded-[15px] border-2 border-dashed border-dark-blue p-4 transition hover:bg-blue-50"
                 >
                     <div className="flex h-14 w-14 items-center justify-center rounded-full bg-dark-blue text-3xl text-white">
                         +

@@ -2,7 +2,7 @@
 import RouteLink from "@/components/comparisionsection/RouteLink";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { routeLinks } from "@/data/carData";
 import { CompareCar, SelectedCar } from "@/type/car";
 import CompareCard from "@/section/CompareCard";
@@ -19,6 +19,17 @@ const page = () => {
         createEmptyCar(0),
         createEmptyCar(1),
     ]);
+
+    const comparisonRef = useRef<HTMLDivElement | null>(null);
+    const selectedCars = cars.filter((car) => car.selectedCar);
+
+    const isComparisonReady =
+        cars.filter(
+            (car) =>
+                car.selectedCar?.brand &&
+                car.selectedCar?.model &&
+                car.selectedCar?.variant
+        ).length === cars.length;
 
     const searchParams = useSearchParams();
 
@@ -53,6 +64,15 @@ const page = () => {
             setCars([createEmptyCar(0), createEmptyCar(1)]);
         }
     }, [searchParams]);
+    useEffect(() => {
+        if (isComparisonReady && showComparison) {
+            comparisonRef.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            });
+        }
+    }, [isComparisonReady, showComparison]);
+
     const comparisonSpecs = [
         {
             label: "Brand",
@@ -84,15 +104,11 @@ const page = () => {
         },
     ];
 
-    const selectedCars = cars.filter((car) => car.selectedCar);
 
-    const isComparisonReady =
-        cars.filter(
-            (car) =>
-                car.selectedCar?.brand &&
-                car.selectedCar?.model &&
-                car.selectedCar?.variant
-        ).length >= 2;
+
+
+
+
 
     return (
         <div>
@@ -111,7 +127,6 @@ const page = () => {
                     <CompareCard
                         cars={cars}
                         setCars={setCars}
-                        showComparision={showComparison}
                         setShowComparison={setShowComparison}
                     />
 
@@ -132,7 +147,7 @@ const page = () => {
 
             </div>
             {isComparisonReady && showComparison && (
-                <div className="container md:px-6 xl:px-37.5 pb-20">
+                <div ref={comparisonRef} className="container md:px-6 xl:px-37.5 pb-20">
 
                     <p>
                         {selectedCars.map((car, index) => (
