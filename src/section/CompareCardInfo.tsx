@@ -4,6 +4,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import React from "react";
 
 import { CompareCar } from "@/type/car";
 
@@ -27,41 +28,42 @@ const CompareCardInfo = ({
             accordionKey: "basic-information",
             accordionHeader: "Basic Information",
             accordionBody: (selectedCars: CompareCar[]) => (
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-md">
                     <table className="w-full min-w-175 border-collapse text-center">
-                        <thead>
+                        <thead >
                             <tr className="bg-[#0088FF]/15">
-                                <th className="sticky z-10 min-w-55 border-gray-200 px-5 py-4 font-semibold text-left">
-                                    Key Highlights
+                                <th className="bg-[#d9edff]  sticky left-0 z-10 min-w-55 border-l border-gray-200 px-5 py-4 font-semibold text-left">
+                                    Key Highlight
                                 </th>
 
                                 {selectedCars.map((car) => (
                                     <th
                                         key={car.id}
-                                        className="min-w-55 px-5 py-4 text-center"
+                                        className=" min-w-55  px-5 py-4 text-center"
                                     >
                                         <div className="mt-1 text-sm font-medium">
-                                            {car.selectedCar?.model}
+                                            <p> {car.selectedCar?.model}</p>
+                                            <p> {car.selectedCar?.variant}</p>
                                         </div>
                                     </th>
                                 ))}
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody >
                             {comparisonSpecs.map((spec) => (
                                 <tr
                                     key={spec.key}
-                                    className="border-[#B6B6B6] border-b last:border-b-0"
+                                    className="border-b border-[#B6B6B6] last:border-b-0"
                                 >
-                                    <td className="sticky left-0 z-10 border-b border-r border-gray-200 bg-white px-5 py-4 font-semibold text-gray-700 text-left">
+                                    <td className="sticky left-0 z-10 border-b border-r border-gray-200 bg-white px-5 py-4 text-left font-semibold text-gray-700">
                                         {spec.label}
                                     </td>
 
                                     {selectedCars.map((car) => (
                                         <td
                                             key={car.id}
-                                            className="px-5 py-4 text-gray-600 border border-r"
+                                            className="border border-gray-200 px-5 py-4 text-gray-600"
                                         >
                                             {car.selectedCar?.[
                                                 spec.key as keyof typeof car.selectedCar
@@ -81,50 +83,94 @@ const CompareCardInfo = ({
             accordionHeader: "Engine & Transmission",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on engine and transmission.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            engine is  {car.selectedCar?.engineDisplacement} (ex-showroom) for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
-            ),
+            )
         },
         {
             accordionKey: "fuel-performance",
-            accordionHeader: " Fuel & Performance",
+            accordionHeader: "Fuel & Performance",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Fuel and performance.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            starts at Rs. {car.selectedCar?.mileage} (ex-showroom) for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -133,24 +179,46 @@ const CompareCardInfo = ({
             accordionHeader: "Suspension, Steering & Brakes",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Suspension, Steering & Brakes.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            have the Suspension, Steering & Brakes as {car.selectedCar?.suspensionSteeringBrakes}  for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -159,24 +227,46 @@ const CompareCardInfo = ({
             accordionHeader: "Dimensions & Capacity",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Dimensions & Capacity.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            Dimensions & Capacity {car.selectedCar?.dimensionsCapacity}  for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -185,24 +275,46 @@ const CompareCardInfo = ({
             accordionHeader: "Comfort & Convenience",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Comfort & Convenience.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "} has Comfort & Convenience like
+                            {car.selectedCar?.comfortConvenience} (ex-showroom) for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
 
@@ -212,24 +324,46 @@ const CompareCardInfo = ({
             accordionHeader: "Interior",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Interior.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            Interior like  {car.selectedCar?.interior}  for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -238,24 +372,46 @@ const CompareCardInfo = ({
             accordionHeader: "Exterior",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Exterior.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            has Exterior like {car.selectedCar?.exterior}  for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -264,24 +420,46 @@ const CompareCardInfo = ({
             accordionHeader: "ADAS",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on ADAS.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            has adas {car.selectedCar?.adas} (ex-showroom) for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -290,24 +468,46 @@ const CompareCardInfo = ({
             accordionHeader: "Advanced Features",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Advanced Features.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            have Advanced Features like {car.selectedCar?.advancedFeatures} (ex-showroom) for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -316,24 +516,46 @@ const CompareCardInfo = ({
             accordionHeader: "Entertainment & Communication",
             accordionBody: (selectedCars: CompareCar[]) => (
                 <p className="text-[#6B7280]">
-                    Should you buy the{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    or the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>?
+                    Should you buy{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " or "
+                                    : ""}
+                        </React.Fragment>
+                    ))}
+                    ?
 
-                    Find out which car is the better choice by comparing the two
-                    models based on Price, Size, Space, Boot Space, Service Cost,
-                    Mileage, Features, Colours, and other specifications.
+                    <br />
 
-                    The{" "}
-                    <strong>{selectedCars[0]?.selectedCar?.model}</strong>{" "}
-                    starts at Rs. {selectedCars[0]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[0]?.selectedCar?.variant} variant, while the{" "}
-                    <strong>{selectedCars[1]?.selectedCar?.model}</strong>{" "}
-                    starts at {selectedCars[1]?.selectedCar?.price}
-                    {" "} (ex-showroom) for the{" "}
-                    {selectedCars[1]?.selectedCar?.variant} variant.
+                    Find out which car is the better choice by comparing the{" "}
+                    {selectedCars.map((car, index) => (
+                        <React.Fragment key={car.id}>
+                            <strong>{car.selectedCar?.model}</strong> {" - "}
+                            <strong>{car.selectedCar?.variant}</strong>
+                            {index < selectedCars.length - 2
+                                ? ", "
+                                : index === selectedCars.length - 2
+                                    ? " and "
+                                    : ""}
+                        </React.Fragment>
+                    ))}{" "}
+                    based on Entertainment & Communication.
+
+                    <br />
+
+                    {selectedCars.map((car) => (
+                        <React.Fragment key={car.id}>
+                            The{" "}
+                            <strong>{car.selectedCar?.model}</strong>{" "}
+                            has Entertainment & Communication features like {car.selectedCar?.entertainmentCommunication}  for the{" "}
+                            {car.selectedCar?.variant} variant.{" "}
+                        </React.Fragment>
+                    ))}
                 </p>
             ),
         },
@@ -350,7 +572,7 @@ const CompareCardInfo = ({
                     <AccordionItem
                         key={accordion.accordionKey}
                         value={accordion.accordionKey}
-                        className="cursor-pointer border my-3 px-4 shadow-[0px_0px_4px_0px_#00000040] rounded-[10px]"
+                        className="cursor-pointer border my-3 px-4 rounded-[10px]"
                     >
                         <AccordionTrigger className="font-semibold text-[#474747]">
                             {accordion.accordionHeader}

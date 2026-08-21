@@ -2,6 +2,7 @@
 import RouteLink from "@/components/comparisionsection/RouteLink";
 import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
+import React from "react";
 import { useEffect, useRef, useState } from "react";
 import { routeLinks } from "@/data/carData";
 import { CompareCar, SelectedCar } from "@/type/car";
@@ -104,25 +105,19 @@ const page = () => {
         },
     ];
 
-
-
-
-
-
-
     return (
         <div>
             <div className="my-20">
-                <div className="container md:px-6 xl:px-37.5">
-                    <div className="mb-2.5 flex gap-2.5">
+                <div className="container md:px-6 xl:px-37">
+                    <div className="mb-3 flex gap-2.5">
                         {
                             routeLinks.map((route, index) => (
                                 <RouteLink key={index} image={route.image} imageAlt={route.imageAlt} variant={route.variant} routeName={route.routeName} />
                             ))
                         }
                     </div>
-                    <p className="text-3xl font-open-sans font-bold ">Compare Cars</p>
-                    <p className="font-open-sans mt-4 text-custom-grey">Not sure which HDFC product suits your needs? Use HDFC's comparison tool to evaluate multiple options across features, benefits,interest rates, eligibility, fees, and more helping you choose the right financial solution with confidence.</p>
+                    <p className="text-3xl font-open-sans font-bold">Compare Cars</p>
+                    <p className="font-open-sans mt-4 text-[#6B7280]">Not sure which HDFC product suits your needs? Use HDFC's comparison tool to evaluate multiple options across features, benefits,interest rates, eligibility, fees, and more helping you choose the right financial solution with confidence.</p>
 
                     <CompareCard
                         cars={cars}
@@ -131,11 +126,10 @@ const page = () => {
                     />
 
                     <Button
-                        className={`block mx-auto mt-5 sm:w-auto bg-dark-blue hover:bg-dark-blue/80 px-4  xl:px-12 h-15  ${!isComparisonReady
+                        className={`block mx-auto mt-5 sm:w-auto bg-[#004C8F] hover:bg-[#004C8F/80] px-4 xl:px-12 h-15 ${!isComparisonReady
                             ? "cursor-not-allowed opacity-50"
                             : "cursor-pointer"
                             }`}
-
                         disabled={!isComparisonReady}
                         onClick={() => setShowComparison((prev) => !prev)}
                     >
@@ -147,30 +141,75 @@ const page = () => {
 
             </div>
             {isComparisonReady && showComparison && (
-                <div ref={comparisonRef} className="container md:px-6 xl:px-37.5 pb-20">
+                <div ref={comparisonRef} className="container md:px-6 xl:px-37 pb-20">
 
                     <p>
                         {selectedCars.map((car, index) => (
                             <span key={car.id} className="font-sans font-bold text-[#474747] text-2xl mb-5">
                                 {index > 0 && <span className="px-3">VS</span>}
-
                                 {car.selectedCar?.model} - {car.selectedCar?.variant}
                             </span>
                         ))}
                     </p>
 
                     <p className="text-[#6B7280] mt-5 mb-10">
-                        Should you buy the {selectedCars[0]?.selectedCar?.model} or the {selectedCars[1]?.selectedCar?.model}? Find out which car is the better choice by comparing the two models based on Price, Size, Space, Boot Space, Service Cost, Mileage, Features, Colours, and other specifications. The {selectedCars[0]?.selectedCar?.model} starts at Rs. {selectedCars[0]?.selectedCar?.price} (ex-showroom) for the {selectedCars[0]?.selectedCar?.variant} variant, while the {selectedCars[1]?.selectedCar?.model} starts at {selectedCars[1]?.selectedCar?.price} (ex-showroom) for the {selectedCars[1]?.selectedCar?.variant} variant. The spec of {selectedCars[0]?.selectedCar?.model} is powered by a {selectedCars[0]?.selectedCar?.engineDisplacement} Petrol engine, and the specs of {selectedCars[1]?.selectedCar?.model} also comes with a {selectedCars[1]?.selectedCar?.engineDisplacement}  Petrol engine. In terms of mileage, the {selectedCars[0]?.selectedCar?.model} delivers {selectedCars[0]?.selectedCar?.mileage}  (Petrol top model), while the {selectedCars[1]?.selectedCar?.model} offers {selectedCars[1]?.selectedCar?.mileage} (Petrol top model).
+                        Should you buy{" "}
+
+                        {selectedCars.map((car, index) => (
+                            <React.Fragment key={car.id}>
+                                the{" "}
+                                <strong>{car.selectedCar?.model}</strong>
+                                {index < selectedCars.length - 2
+                                    ? ", "
+                                    : index === selectedCars.length - 2
+                                        ? " or "
+                                        : "?"}
+                            </React.Fragment>
+                        ))}{" "}
+
+                        Find out which car is the better choice by comparing the models based on
+                        Price, Size, Space, Boot Space, Service Cost, Mileage, Features, Colours,
+                        and other specifications.{" "}
+
+                        {selectedCars.map((car, index) => (
+                            <React.Fragment key={`price-${car.id}`}>
+                                The{" "}
+                                <strong>{car.selectedCar?.model}</strong>{" "}
+                                starts at Rs. {car.selectedCar?.price} (ex-showroom) for the{" "}
+                                {car.selectedCar?.variant} variant
+                                {index < selectedCars.length - 1 ? ", " : "."}{" "}
+                            </React.Fragment>
+                        ))}
+
+                        The specs of{" "}
+
+                        {selectedCars.map((car, index) => (
+                            <React.Fragment key={`engine-${car.id}`}>
+                                <strong>{car.selectedCar?.model}</strong>{" "}
+                                is powered by a{" "}
+                                {car.selectedCar?.engineDisplacement} Petrol engine
+                                {index < selectedCars.length - 1 ? ", " : "."}{" "}
+                            </React.Fragment>
+                        ))}
+
+                        In terms of mileage,{" "}
+
+                        {selectedCars.map((car, index) => (
+                            <React.Fragment key={`mileage-${car.id}`}>
+                                the{" "}
+                                <strong>{car.selectedCar?.model}</strong>{" "}
+                                delivers {car.selectedCar?.mileage} (Petrol top model)
+                                {index < selectedCars.length - 1 ? ", while " : "."}{" "}
+                            </React.Fragment>
+                        ))}
                     </p>
 
 
-                    <div className="overflow-x-auto  border border-gray-200">
-
-
+                    <div className="overflow-x-auto border border-gray-200 rounded-md mb-3">
                         <table className="w-full min-w-175 border-collapse text-center">
                             <thead >
-                                <tr className="bg-[#0088FF]/15 ">
-                                    <th className="sticky  z-10 min-w-55  border-gray-200  px-5 py-4 font-semibold text-left">
+                                <tr className="bg-[#0088FF]/15">
+                                    <th className="bg-[#d9edff] sticky left-0 z-20 min-w-55  border-gray-200  px-5 py-4 font-semibold text-left">
                                         Key Highlights
                                     </th>
 
@@ -180,7 +219,8 @@ const page = () => {
                                             className="min-w-55 px-5 py-4 text-center"
                                         >
                                             <div className="mt-1 text-sm font-medium ">
-                                                {car.selectedCar?.model}
+                                                <p> {car.selectedCar?.model}</p>
+                                                <p> {car.selectedCar?.variant}</p>
                                             </div>
                                         </th>
                                     ))}
@@ -213,13 +253,12 @@ const page = () => {
                                 ))}
                             </tbody>
                         </table>
-
-
                     </div>
 
                     <CompareCardInfo
                         selectedCars={selectedCars}
                         comparisonSpecs={comparisonSpecs}
+
                     />
                 </div>
             )}

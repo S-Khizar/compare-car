@@ -6,7 +6,7 @@ import { brandAndVariantGroups } from "@/data/carData";
 import { CompareCar, SelectedCar } from "@/type/car";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 
@@ -24,6 +24,8 @@ export default function Home() {
       selectedCar: null,
     },
   ]);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [cardHeight, setCardHeight] = useState<number | null>(null);
 
   const handleCarSelect = (
     carId: string,
@@ -103,6 +105,34 @@ export default function Home() {
       .filter((brandGroup) => brandGroup.models.length > 0);
   };
 
+  useEffect(() => {
+    const updateHeight = () => {
+      const heights = cardRefs.current.map(
+        (card) => card?.getBoundingClientRect().height ?? 0
+      );
+
+      const maxHeight = Math.max(...heights);
+
+      if (maxHeight > 0) {
+        setCardHeight(maxHeight);
+      }
+    };
+
+    updateHeight();
+
+    const observers = cardRefs.current
+      .filter(Boolean)
+      .map((card) => {
+        const observer = new ResizeObserver(updateHeight);
+        observer.observe(card!);
+        return observer;
+      });
+
+    return () => {
+      observers.forEach((observer) => observer.disconnect());
+    };
+  }, []);
+
   const getCompareQuery = () => {
     const selectedCars = cars
       .map((car) => car.selectedCar)
@@ -110,6 +140,8 @@ export default function Home() {
 
     return encodeURIComponent(JSON.stringify(selectedCars));
   };
+
+  
 
   return (
     <>
@@ -130,22 +162,30 @@ export default function Home() {
               </div>
 
               {/* Content */}
-              <div className="relative mt-12 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-y-10 md:gap-10  ">
+              <div className="relative mt-12 grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-3 gap-y-10 md:gap-10">
                 <div className="relative col-span-2 flex flex-col gap-9 md:flex-row">
-                  {cars.slice(0, 2).map((car) => (
+                  {cars.slice(0, 2).map((car, index) => (
                     <CarCard
                       key={car.id}
                       title={car.title}
                       selectedCar={car.selectedCar}
                       firstSelectOptions={getFilteredOptions(car.id)}
-                      cardClassName="flex-1"
+                      cardClassName="flex-1 item-stretch"
                       onCarSelect={(selectedCar) =>
                         handleCarSelect(car.id, selectedCar)
                       }
+                      cars={cars}
+                      cardRef={(el) => {
+                        cardRefs.current[index] = el;
+                      }}
+                      cardHeight={cardHeight}
                     />
                   ))}
 
-                  <div className="absolute left-1/2 top-1/2 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-dark-blue text-2xl font-bold text-white">
+                  {/* VS */}
+                  <div
+                    className="pointer-events-none absolute left-1/2 top-1/2 z-30 flex h-20 w-20 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full  bg-dark-blue text-2xl font-bold text-white"
+                  >
                     VS
                   </div>
                 </div>

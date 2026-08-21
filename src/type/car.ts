@@ -27,6 +27,14 @@ export interface SelectedCar {
     maxPower?: string;
     mileage?: string;
     transmission?: string;
+    suspensionSteeringBrakes?: string;
+    dimensionsCapacity?: string;
+    adas?:string;
+    comfortConvenience?: string;
+    interior?: string;
+    exterior?: string;
+    advancedFeatures?: string;
+    entertainmentCommunication?: string;
 }
 
 /**

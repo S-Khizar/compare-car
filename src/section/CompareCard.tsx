@@ -15,7 +15,10 @@ type CompareCardProps = {
 
 };
 
+
+
 const CompareCard = ({ cars, setCars, setShowComparison }: CompareCardProps) => {
+    console.log("cars data : ", cars);
 
     const MAX_CARS = 4;
     const addCar = () => {
@@ -83,6 +86,14 @@ const CompareCard = ({ cars, setCars, setShowComparison }: CompareCardProps) => 
             maxPower: variant?.maxPower,
             mileage: variant?.mileage,
             transmission: variant?.transmission,
+            suspensionSteeringBrakes: variant?.suspensionSteeringBrakes,
+            dimensionsCapacity: variant?.dimensionsCapacity,
+            adas: variant?.adas,
+            comfortConvenience: variant?.comfortConvenience,
+            interior: variant?.interior,
+            exterior: variant?.exterior,
+            advancedFeatures: variant?.advancedFeatures,
+            entertainmentCommunication: variant?.entertainmentCommunication,
         };
 
         setCars((prevCars) =>
